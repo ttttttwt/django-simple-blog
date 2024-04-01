@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block title %}Home{% endblock title %}
+{% block content %}
+{% load static %}
+<main class="min-h-screen flex">
+    <section class="flex w-full flex-col mt-5">
+        <h1 class="text-center text-3xl font-bold">Your post</h1>
+        <div class="h-full px-2 py-2 mx-8 pt-5">
+            <div class="grid grid-cols-4 gap-3 px-5 py-5">
+                {% for post in posts %}
+                <a href="{% url 'detail-post' post.id %}">
+                    <div class="border-2 rounded-xl border-slate-950 hover:shadow-lg hover:shadow-blue-500/50">
+                        <div class="h-32">
+                            {% if post.image %}
+                            <img class="rounded-t-xl w-full h-full object-cover" src="{{ post.image.url }}"
+                                alt="hello" />
+                            {% else %}
+                            <!-- Placeholder image or alternate content -->
+                            <img class="rounded-t-xl w-full h-full object-cover"
+                                src="{% static '\image\360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg' %}"
+                                alt="hello" />
+                            {% endif %}
+                        </div>
+                        <div class="bg-white rounded-b-xl pt-2 py-2 px-3">
+                            <h1>{{post.title}}</h1>
+                            <div class="relative">
+                                <h1 class="absolute text-zinc-300 bottom-0 right-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-3 inline-block">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    </svg><span class="text-sm"> {{post.view}}</span>
+                                </h1>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

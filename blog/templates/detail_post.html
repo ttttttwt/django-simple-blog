@@ -1,0 +1,110 @@
+{% extends "base.html" %} {% block title %}Detail Post{% endblock title %}
+{%block content %} {% load static %}
+<section>
+  <div class="flex flex-col pt-8 min-h-screen mx-auto max-w-screen-lg px-5">
+    <div>
+      <div class="px-2">
+        <div class="flex justify-between text-xs text-zinc-300">
+          <h6>{{post.category}}</h6>
+          <h6>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="inline-block w-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+            </svg>
+            {{post.create_at}}
+          </h6>
+        </div>
+        {% if request.user == post.create_by %}
+        <div class="flex justify-between items-center py-2 gap-2">
+          <div class="flex-auto">
+            <h1 class="text-2xl font-bold py-2">{{post.title}}</h1>
+          </div>
+          <a href="{% url 'edit-post' post.id %}" class="bg-sky-600 rounded px-2 py-2 text-white flex-none">Edit</a>
+          <a href="{% url 'dashboard:delete' post.id %}"
+            class="bg-red-600 rounded px-2 py-2 text-white flex-none">Delete</a>
+        </div>
+        {% else %}
+        <h1 class="text-2xl font-bold py-2">{{post.title}}</h1>
+        {% endif %}
+        <div class="flex justify-between text-sm py-2">
+          <div class="flex">
+            <img class="w-8 h-8 rounded-full overflow-hidden" src="\media\post_images\unknow.png" alt="" />
+            <h3 class="pl-2">{{post.create_by}}</h3>
+          </div>
+          <h3 class="text-zinc-300">
+            {{post.view}}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-4 inline-block">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          </h3>
+        </div>
+      </div>
+      <hr class="border-2" />
+      <div class="w-full pt-4">
+        {% if post.image %}
+        <img class="object-cover mx-auto max-w-[33%]" src="{{post.image.url}}" alt="" />
+        {% endif %}
+      </div>
+    </div>
+    <div class="pt-6">{{post.content | safe}}</div>
+    <hr class="border-2 border-gray-700 mt-5 mb-2" />
+    <div class="mb-6">
+      <h1 class="text-2xl">Comment:</h1>
+      <form action="{% url 'add-comment' post.id %}" method="post">
+        {% csrf_token %} {{form.message}}
+        <div class="flex justify-end">
+          <button type="submit" class="bg-sky-600 rounded px-2 py-2 text-white mt-2">
+            Comment
+          </button>
+        </div>
+      </form>
+      <hr class="mt-5 mb-2" />
+      <div>
+        {% for msg in comments %}
+        <div class="bg-slate-100 px-3 py-2 rounded-lg my-3">
+          <h1 class="font-semibold text-sm">{{msg.user}} <span
+              class="font-normal text-slate-400">--{{msg.create_at}}</span></h1>
+          <h1 class="text-lg pl-2">{{msg.message}}</h1>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="h-full px-2 py-2 bg-slate-200">
+    <h1 class="text-2xl text-center font-bold">Related post</h1>
+    <div class="grid grid-cols-4 gap-3 px-5 py-5">
+      {% for p in related_post %}
+      <a href="{% url 'detail-post' p.id %}">
+        <div class="border-2 rounded-xl border-slate-950 hover:shadow-lg hover:shadow-blue-500/50">
+          <div class="h-32">
+            {% if p.image %}
+            <img class="rounded-t-xl w-full h-full object-cover" src="{{p.image.url}}" alt="hello" />
+            {% else %}
+            <img class="rounded-t-xl w-full h-full object-cover"
+              src="{% static '\image\360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg' %}" alt="hello" />
+            {% endif %}
+          </div>
+          <div class="bg-white rounded-b-xl pt-2 py-2 px-3">
+            <h1>{{p.title}}</h1>
+            <div class="relative">
+              <h1 class="absolute text-zinc-300 bottom-0 right-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="w-3 inline-block">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg><span class="text-sm"> {{p.view}}</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock content %}
